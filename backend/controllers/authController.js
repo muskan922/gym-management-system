@@ -48,19 +48,13 @@ export const register = async (req, res, next) => {
       });
     }
 
-    const salt = await bcrypt.genSalt(
-      parseInt(process.env.SALT_ROUNDS) || 10
-    );
-
-    const hashedPassword = await bcrypt.hash(password, salt);
-
     const user = await User.create({
       name: name.trim(),
       email: email.toLowerCase(),
-      password: hashedPassword,
+      password, // Pass plain text, schema pre-save hook will hash it
 
-      // Only allow MEMBER by default
-      role: role || "MEMBER",
+      // Default to "ADMIN" since "MEMBER" is not in the enum
+      role: role || "ADMIN",
     });
 
     res.status(201).json({
@@ -97,7 +91,7 @@ export const login = async (req, res, next) => {
 
     const user = await User.findOne({
       email: email.toLowerCase(),
-    });
+    }).select("+password");
 
     if (!user) {
       return res.status(401).json({
@@ -251,14 +245,7 @@ export const changePassword = async (req, res, next) => {
       });
     }
 
-    const salt = await bcrypt.genSalt(
-      parseInt(process.env.SALT_ROUNDS) || 10
-    );
-
-    user.password = await bcrypt.hash(
-      newPassword,
-      salt
-    );
+    user.password = newPassword; // Pass plain text, schema pre-save hook will hash it
 
     await user.save();
 
