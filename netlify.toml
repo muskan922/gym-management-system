@@ -1,0 +1,26 @@
+# Netlify configuration file
+# This tells Netlify how to deploy your monorepo/subdirectory frontend structure.
+
+[build]
+  # The directory where the frontend code lives
+  base = "frontend"
+  
+  # The command to build the project (run inside the base directory)
+  command = "npm run build"
+  
+  # The directory to publish (relative to the base directory)
+  publish = "dist"
+
+# Rule to handle Single Page Application (SPA) routing redirects
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Note: Once you deploy your backend (e.g. on Render or Railway),
+# you can uncomment this redirect to proxy API requests to your live backend:
+# [[redirects]]
+#   from = "/api/*"
+#   to = "https://your-backend-api-url/api/:splat"
+#   status = 200
+#   force = true
