@@ -1,2 +1,5 @@
+# API Proxy Redirect
+/api/*    https://gym-management-system-exow.onrender.com/api/:splat  200
+
 # SPA Routing redirect
 /*    /index.html   200
